@@ -55,5 +55,3 @@ export function TasksList({
     />
   );
 }
-
-const styles = StyleSheet.create({});

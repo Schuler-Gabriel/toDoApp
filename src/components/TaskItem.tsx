@@ -14,6 +14,8 @@ import { TasksListProps } from "../components/TasksList";
 
 import Icon from "react-native-vector-icons/Feather";
 
+import editIcon from "../assets/icons/edit/editPen.png";
+
 import trashIcon from "../assets/icons/trash/trash.png";
 
 export interface Task {
@@ -41,7 +43,7 @@ export function TaskItem({
   const [editedTask, setEditedTask] = useState(item.title);
   const textInputRef = useRef<TextInput>(null);
 
-  function handlerStartEditing() {
+  function handleStartEditing() {
     setIsEditing(true);
   }
 
@@ -66,7 +68,7 @@ export function TaskItem({
   }, [isEditing]);
 
   return (
-    <View>
+    <View style={styles.container}>
       <View>
         <TouchableOpacity
           testID={`button-${index}`}
@@ -88,30 +90,42 @@ export function TaskItem({
             onChangeText={setEditedTask}
             editable={isEditing}
             onSubmitEditing={handleSubmitEditing}
-            style={item.done === true ? styles.taskTextDone : styles.taskText}
+            style={item.done ? styles.taskTextDone : styles.taskText}
             ref={textInputRef}
-          >
-            {item.title}
-          </TextInput>
+          />
         </TouchableOpacity>
       </View>
 
-      <View>
-        {/* 
-        //TODO: terminar a implementação do icone de edição //
-         */}
+      <View style={styles.iconsContainer}>
+        {isEditing ? (
+          <TouchableOpacity onPress={handleCancelEditing}>
+            <Icon name="x" size={24} color="#b2b2b2" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleStartEditing}>
+            <Image source={editIcon} />
+          </TouchableOpacity>
+        )}
+
+        <View style={styles.iconsDivider} />
+
         <TouchableOpacity
-          testID={`trash-${index}`}
-          style={{ paddingHorizontal: 24 }}
+          disabled={isEditing}
           onPress={() => removeTask(item.id)}
         >
-          <Image source={trashIcon} />
+          <Image source={trashIcon} style={{ opacity: isEditing ? 0.2 : 1 }} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   taskButton: {
     flex: 1,
     paddingHorizontal: 24,
@@ -148,5 +162,17 @@ const styles = StyleSheet.create({
     color: "#1DB863",
     textDecorationLine: "line-through",
     fontFamily: "Inter-Medium",
+  },
+  iconsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 12,
+    paddingRight: 24,
+  },
+  iconsDivider: {
+    height: 24,
+    width: 1,
+    backgroundColor: "rgba(196, 196, 196, 0.33)",
+    marginHorizontal: 12,
   },
 });
